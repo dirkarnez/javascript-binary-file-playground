@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <script>
+        var buffer = new ArrayBuffer(8); // allocates 8 bytes
+        var data = new DataView(buffer);// You can write uint8/16/32s and float32/64s to dataviews
+
+        data.setUint8 (0, 0x01); // 1 byte
+        data.setUint16(1, 0x2345); // 2 bytes
+        data.setUint32(3, 0x6789ABCD); // 4  bytes
+        data.setUint8 (7, 0xEF); // 1 byte
+
+        // result:
+        // | 01 23 45 67 | 89 ab cd ef |
+        // saveAs(new Blob([buffer], {type: 'application/octet-stream'}), "data-1.dat");
+
+        // then change the uint16 in data[1] to littleEndian
+        // data.setUint16(1, 0x2345, true); // 2 bytes
+
+        // result (notice the '23' and '45' is changed):
+        // | 01 45 23 67 | 89 ab cd ef |
+        // saveAs(new Blob([buffer], {type: 'application/octet-stream'}), "data-v2.dat");
+
+        const stringRepresentation = [...new Uint8Array(data.buffer)].map(hex => (hex).toString(16).toUpperCase().padStart(2, '0'));
+        console.log(stringRepresentation);
+    </script>
+</body>
+</html>
